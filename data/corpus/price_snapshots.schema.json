@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "price_snapshots.schema.json",
+  "title": "Groww Price Snapshots",
+  "description": "Point-in-time NAV, share price, 1-day change, and key scheme facts extracted from Groww pages. Refreshed on each scheduled ingestion run.",
+  "type": "object",
+  "required": ["schema_version", "as_of_date", "currency", "products"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "description": {
+      "type": "string"
+    },
+    "as_of_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO date when prices were last extracted from Groww"
+    },
+    "currency": {
+      "type": "string",
+      "const": "INR"
+    },
+    "products": {
+      "type": "array",
+      "minItems": 12,
+      "maxItems": 12,
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/mutual_fund_product" },
+          { "$ref": "#/$defs/etf_product" },
+          { "$ref": "#/$defs/stock_product" }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "product_base": {
+      "type": "object",
+      "required": ["id", "scheme_name", "product_type", "source_url", "local_file"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "scheme_name": {
+          "type": "string"
+        },
+        "product_type": {
+          "type": "string",
+          "enum": ["mutual_fund", "etf", "stock"]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "local_file": {
+          "type": "string",
+          "description": "Filename under data/corpus/groww/"
+        }
+      }
+    },
+    "mutual_fund_product": {
+      "allOf": [
+        { "$ref": "#/$defs/product_base" },
+        {
+          "type": "object",
+          "properties": {
+            "product_type": { "const": "mutual_fund" },
+            "nav": {
+              "type": "number",
+              "description": "Net Asset Value in INR"
+            },
+            "nav_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Date of the published NAV"
+            },
+            "change_1d_pct": {
+              "type": "number",
+              "description": "1-day NAV change as percentage"
+            },
+            "aum_cr": {
+              "type": "number",
+              "description": "Assets under management in crore INR"
+            },
+            "expense_ratio_pct": {
+              "type": "number",
+              "description": "Annual expense ratio as a percentage (e.g. 0.83 for 0.83%)"
+            }
+          },
+          "required": ["nav", "nav_date", "change_1d_pct"]
+        }
+      ]
+    },
+    "etf_product": {
+      "allOf": [
+        { "$ref": "#/$defs/product_base" },
+        {
+          "type": "object",
+          "properties": {
+            "product_type": { "const": "etf" },
+            "current_price": {
+              "type": "number",
+              "description": "Latest traded price in INR"
+            },
+            "change_1d_abs": {
+              "type": "number",
+              "description": "Absolute 1-day price change in INR"
+            },
+            "change_1d_pct": {
+              "type": "number",
+              "description": "1-day price change as percentage"
+            },
+            "previous_close": {
+              "type": "number",
+              "description": "Previous session closing price in INR"
+            },
+            "market_cap_cr": {
+              "type": "number",
+              "description": "Market capitalisation in crore INR"
+            },
+            "expense_ratio_pct": {
+              "type": "number",
+              "description": "Annual expense ratio as a percentage (e.g. 0.5 for 0.5%)"
+            }
+          },
+          "required": ["current_price", "change_1d_abs", "change_1d_pct"]
+        }
+      ]
+    },
+    "stock_product": {
+      "allOf": [
+        { "$ref": "#/$defs/product_base" },
+        {
+          "type": "object",
+          "properties": {
+            "product_type": { "const": "stock" },
+            "current_price": {
+              "type": "number",
+              "description": "Latest traded price in INR"
+            },
+            "change_1d_abs": {
+              "type": "number",
+              "description": "Absolute 1-day price change in INR"
+            },
+            "change_1d_pct": {
+              "type": "number",
+              "description": "1-day price change as percentage"
+            },
+            "market_cap_cr": {
+              "type": "number",
+              "description": "Market capitalisation in crore INR"
+            }
+          },
+          "required": ["current_price", "change_1d_abs", "change_1d_pct"]
+        }
+      ]
+    }
+  }
+}

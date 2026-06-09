@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "description": "Audit trail of corpus fetch and index rebuild runs. Appended by src.scheduler.jobs on every manual or scheduled ingestion.",
+  "timezone": "Asia/Kolkata",
+  "runs": [
+    {
+      "started_at": "2026-06-09T12:23:09+05:30",
+      "finished_at": "2026-06-09T12:23:52+05:30",
+      "success": true,
+      "fetch_successes": 12,
+      "fetch_failures": 0,
+      "ingested_at": "2026-06-09T06:53:51.378673+00:00",
+      "chunk_count": 55,
+      "error": null
+    }
+  ]
+}

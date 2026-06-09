@@ -1,0 +1,79 @@
+/**
+ * HDFC Mutual Fund Assistant — Design tokens
+ * Apple HIG spacing + Groww brand colors (light / dark)
+ */
+
+:root,
+[data-theme="light"] {
+  --color-primary: #5367f5;
+  --color-primary-muted: rgba(83, 103, 245, 0.08);
+  --color-success: #00c853;
+  --color-warning: #ffb300;
+  --color-error: #e53935;
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-text-primary: #1a1a2e;
+  --color-text-secondary: #6b7280;
+  --color-separator: #e5e7eb;
+  --color-glass: rgba(255, 255, 255, 0.72);
+
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", sans-serif;
+
+  --text-large-title: 700 34px/41px var(--font-family);
+  --text-title-1: 700 28px/34px var(--font-family);
+  --text-title-2: 600 22px/28px var(--font-family);
+  --text-title-3: 600 20px/25px var(--font-family);
+  --text-headline: 600 17px/22px var(--font-family);
+  --text-body: 400 17px/22px var(--font-family);
+  --text-callout: 400 16px/21px var(--font-family);
+  --text-subhead: 400 15px/20px var(--font-family);
+  --text-footnote: 400 13px/18px var(--font-family);
+  --text-caption: 400 12px/16px var(--font-family);
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  --motion-fast: 200ms ease-out;
+  --motion-normal: 350ms ease-out;
+}
+
+[data-theme="dark"] {
+  --color-primary: #6b7ff7;
+  --color-primary-muted: rgba(107, 127, 247, 0.15);
+  --color-success: #00e676;
+  --color-warning: #ffc107;
+  --color-error: #ef5350;
+  --color-bg: #0d0d0f;
+  --color-surface: #1c1c1e;
+  --color-surface-elevated: #2c2c2e;
+  --color-text-primary: #f5f5f7;
+  --color-text-secondary: #98989d;
+  --color-separator: #38383a;
+  --color-glass: rgba(28, 28, 30, 0.72);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.32);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.48);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
