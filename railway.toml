@@ -1,5 +1,6 @@
 [build]
 builder = "NIXPACKS"
+buildCommand = "pip install -r requirements.txt && python -m src.ingest.indexer"
 
 [deploy]
 startCommand = "uvicorn src.api.main:app --host 0.0.0.0 --port $PORT"
