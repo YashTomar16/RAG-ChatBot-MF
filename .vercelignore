@@ -1,0 +1,15 @@
+.venv
+venv
+index
+src
+tests
+data
+Docs
+.pytest_cache
+*.md
+!frontend/README.md
+Procfile
+railway.toml
+requirements.txt
+.env
+.env.example

@@ -149,12 +149,14 @@ Confirms ingestion audit log (after at least one `--once` run).
 ### 2.1 Create the project
 
 1. Log in to [Vercel](https://vercel.com) → **Add New** → **Project** → import the same GitHub repo.
-2. **Root Directory:** set to **`frontend`** (critical — not repo root).
+2. **Root Directory:** either leave as **repo root** (uses root `vercel.json` to build `frontend/`) **or** set to **`frontend`** directly.
 3. **Framework Preset:** Vite (auto-detected).
-4. **Build Command:** `npm run build` (default).
-5. **Output Directory:** `dist` (default).
+4. **Build Command:** `npm run build` if root is `frontend`; root `vercel.json` handles monorepo builds automatically.
+5. **Output Directory:** `dist` if root is `frontend`; `frontend/dist` when using repo root.
 
-`frontend/vercel.json` handles SPA routing (all paths → `index.html`):
+> **If you see:** `No FastAPI entrypoint found…` — Vercel is trying to deploy Python from the repo root. Fix: use root `vercel.json` (included in repo) **or** set **Root Directory** to `frontend` in Project Settings → General → Root Directory, then redeploy.
+
+`frontend/vercel.json` handles SPA routing when deploying from the `frontend/` subdirectory:
 
 ```json
 {
@@ -260,6 +262,7 @@ Audit trail: `data/ingestion_log.json` and `GET /api/ingestion`.
 | `groq_configured: false` | `GROQ_API_KEY` missing or not loaded | Set variable on Railway; redeploy (env loaded at startup) |
 | Chat returns empty / error | Wrong `VITE_API_URL` | Fix on Vercel; **redeploy** frontend |
 | API calls go to wrong host | Stale Vercel build | Redeploy after changing `VITE_API_URL` |
+| `No FastAPI entrypoint found` on Vercel | Repo root deployed as Python | Set Root Directory to `frontend` **or** use root `vercel.json`; redeploy |
 | Slow first chat response | BGE model cold start (~130 MB) | Normal on Railway; warm with health check ping |
 | Stale NAV dates | Scheduler not running | Add worker service or run `--once` periodically |
 | Fund card ≠ answer text | Old backend before cache fix | Ensure latest `src/app/data.py` is deployed |
