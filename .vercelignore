@@ -1,8 +1,8 @@
 .venv
 venv
 index
-src
-tests
+/src
+/tests
 data
 Docs
 .pytest_cache
