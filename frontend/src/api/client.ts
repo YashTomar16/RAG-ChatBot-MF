@@ -1,12 +1,14 @@
 import type { BootstrapData, ChatResponse, HealthResponse, Product } from "../types";
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "";
+const configured = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+const API_BASE = import.meta.env.PROD ? "" : (configured ?? "http://localhost:8000");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const hasBody = init?.body != null;
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
       ...(init?.headers ?? {}),
     },
   });
