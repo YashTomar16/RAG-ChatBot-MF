@@ -1,40 +1,55 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { postChat } from "../api/client";
+import { ChatBackground } from "../components/ChatBackground";
 import { ChatBubble } from "../components/ChatBubble";
+import { ChatSidebar } from "../components/ChatSidebar";
 import { FundCard } from "../components/FundCard";
-import { InsightCard } from "../components/Widgets";
+import { GrowwLogo } from "../components/GrowwLogo";
 import { useBootstrap } from "../context/BootstrapContext";
+import { createMessageId, useConversations } from "../hooks/useConversations";
+import { useTheme } from "../hooks/useTheme";
 import type { ChatMessage } from "../types";
-
-function newId() {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
 
 export function ChatPage() {
   const bootstrap = useBootstrap();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { dark, toggle } = useTheme();
+  const {
+    conversations,
+    activeConversation,
+    activeId,
+    createConversation,
+    selectConversation,
+    deleteConversation,
+    updateMessages,
+  } = useConversations();
+
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  const messages = activeConversation?.messages ?? [];
 
   const sendQuestion = async (question: string) => {
     const trimmed = question.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || loading || !activeConversation) return;
 
     setError(null);
     setLoading(true);
-    setMessages((prev) => [...prev, { id: newId(), role: "user", content: trimmed }]);
+
+    const pending: ChatMessage[] = [
+      ...messages,
+      { id: createMessageId(), role: "user", content: trimmed },
+    ];
+    updateMessages(activeConversation.id, pending);
 
     try {
       const response = await postChat(trimmed);
-      setMessages((prev) => [
-        ...prev,
+      updateMessages(activeConversation.id, [
+        ...pending,
         {
-          id: newId(),
+          id: createMessageId(),
           role: "assistant",
           content: response.answer,
           sourceUrl: response.source_url,
@@ -44,6 +59,7 @@ export function ChatPage() {
         },
       ]);
     } catch (err) {
+      updateMessages(activeConversation.id, messages);
       setError(err instanceof Error ? err.message : "Request failed");
     } finally {
       setLoading(false);
@@ -52,86 +68,123 @@ export function ChatPage() {
   };
 
   useEffect(() => {
-    const state = location.state as { prompt?: string } | null;
-    if (state?.prompt) {
-      navigate(".", { replace: true, state: {} });
-      void sendQuestion(state.prompt);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.state]);
-
-  useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, activeId]);
 
   return (
-    <>
-      <h1 className="large-title">Chat</h1>
-      {messages.length === 0 && (
-        <InsightCard
-          title="Welcome"
-          body="Ask factual questions about expense ratio, NAV, exit load, benchmarks, and minimum SIP for HDFC schemes."
-        />
-      )}
+    <div className="chat-app" data-theme={dark ? "dark" : "light"}>
+      <ChatSidebar
+        conversations={conversations}
+        activeId={activeId}
+        sidebarOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onSelect={selectConversation}
+        onCreate={() => {
+          createConversation();
+          setError(null);
+          setInput("");
+        }}
+        onDelete={deleteConversation}
+      />
 
-      {!bootstrap.index_ready && (
-        <div className="error-banner">Backend index not ready — ingestion may be required on Railway.</div>
-      )}
-      {!bootstrap.groq_configured && (
-        <div className="error-banner">GROQ_API_KEY not configured on the backend.</div>
-      )}
+      <main className="chat-main chat-main-groww">
+        <ChatBackground />
 
-      <p className="caption" style={{ marginBottom: 8 }}>
-        Suggested prompts
-      </p>
-      <div className="chip-grid">
-        {bootstrap.suggested_prompts.map((prompt) => (
-          <button
-            key={prompt}
-            type="button"
-            className="btn btn-chip"
-            onClick={() => void sendQuestion(prompt)}
-            disabled={loading}
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
+        <div className="chat-main-content">
+          <header className="chat-main-header">
+            <button
+              type="button"
+              className="chat-menu-btn"
+              aria-label="Open chat history"
+              onClick={() => setSidebarOpen(true)}
+            >
+              ☰
+            </button>
+            <div className="chat-main-title-wrap">
+              <div className="chat-main-title-row">
+                <GrowwLogo size={28} />
+                <h1 className="chat-main-title">{activeConversation?.title ?? "HDFC Mutual Funds"}</h1>
+              </div>
+              <p className="chat-main-caption">Ask factual questions about HDFC schemes on Groww</p>
+            </div>
+            <button type="button" className="theme-toggle" onClick={toggle} aria-label="Toggle dark mode">
+              {dark ? "Light" : "Dark"}
+            </button>
+          </header>
 
-      <div className="chat-thread">
-        {messages.map((message) => (
-          <div key={message.id}>
-            <ChatBubble message={message} />
-            {message.role === "assistant" && message.product && (
-              <FundCard product={message.product} />
+          {!bootstrap.index_ready && (
+            <div className="error-banner chat-status-banner">
+              Backend index not ready — ingestion may be required on Railway.
+            </div>
+          )}
+          {!bootstrap.groq_configured && (
+            <div className="error-banner chat-status-banner">
+              GROQ_API_KEY not configured on the backend.
+            </div>
+          )}
+
+          <div className="chat-messages">
+            {messages.length === 0 ? (
+              <div className="chat-empty">
+                <GrowwLogo size={48} className="chat-empty-logo" />
+                <h2 className="chat-empty-title">How can I help with HDFC mutual funds?</h2>
+                <p className="chat-empty-body">
+                  Ask about expense ratio, NAV, exit load, benchmarks, and minimum SIP for 12 HDFC
+                  schemes. I provide facts only — no investment advice.
+                </p>
+                <div className="chat-prompt-grid">
+                  {bootstrap.suggested_prompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      className="btn btn-chip btn-chip-groww"
+                      onClick={() => void sendQuestion(prompt)}
+                      disabled={loading}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="chat-thread">
+                {messages.map((message) => (
+                  <div key={message.id}>
+                    <ChatBubble message={message} />
+                    {message.role === "assistant" && message.product && (
+                      <FundCard product={message.product} />
+                    )}
+                  </div>
+                ))}
+                {loading && <div className="loading chat-thinking">Thinking…</div>}
+                <div ref={bottomRef} />
+              </div>
             )}
           </div>
-        ))}
-        {loading && <div className="loading">Thinking…</div>}
-      </div>
 
-      {error && <div className="error-banner">{error}</div>}
+          {error && <div className="error-banner chat-composer-error">{error}</div>}
 
-      <form
-        className="chat-input-row"
-        onSubmit={(event) => {
-          event.preventDefault();
-          void sendQuestion(input);
-        }}
-      >
-        <input
-          className="chat-input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask a factual question about HDFC schemes…"
-          aria-label="Chat message"
-          disabled={loading}
-        />
-        <button type="submit" className="btn btn-primary" style={{ width: "auto" }} disabled={loading}>
-          Send
-        </button>
-      </form>
-      <div ref={bottomRef} />
-    </>
+          <form
+            className="chat-composer chat-composer-groww"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void sendQuestion(input);
+            }}
+          >
+            <input
+              className="chat-input chat-input-groww"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask a factual question about HDFC schemes…"
+              aria-label="Chat message"
+              disabled={loading}
+            />
+            <button type="submit" className="btn btn-primary chat-send-btn" disabled={loading || !input.trim()}>
+              Send
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
   );
 }

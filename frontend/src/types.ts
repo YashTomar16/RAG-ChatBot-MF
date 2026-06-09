@@ -30,6 +30,14 @@ export interface ChatMessage {
   product?: Product | null;
 }
 
+export interface Conversation {
+  id: string;
+  title: string;
+  createdAt: number;
+  updatedAt: number;
+  messages: ChatMessage[];
+}
+
 export interface ChatResponse {
   answer: string;
   source_url: string | null;
@@ -67,5 +75,3 @@ export interface HealthResponse {
   index_ready: boolean;
   groq_configured: boolean;
 }
-
-export type TabId = "home" | "discover" | "chat" | "portfolio" | "learn";

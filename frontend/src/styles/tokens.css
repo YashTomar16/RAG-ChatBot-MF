@@ -18,6 +18,26 @@
   --color-separator: #e5e7eb;
   --color-glass: rgba(255, 255, 255, 0.72);
 
+  --groww-blue: #5367f5;
+  --groww-blue-deep: #3948d5;
+  --groww-blue-light: #7b93ff;
+  --groww-blue-soft: #eef1ff;
+  --groww-mint: #00d09c;
+  --groww-panel-bg: linear-gradient(145deg, #f9faff 0%, #f7f8fa 50%, #f8f9ff 100%);
+  --groww-blob-1: rgba(83, 103, 245, 0.06);
+  --groww-blob-2: rgba(123, 147, 255, 0.05);
+  --groww-blob-3: rgba(0, 208, 156, 0.03);
+  --grid-idle-border: rgba(83, 103, 245, 0.03);
+  --grid-peak-bg: rgba(83, 103, 245, 0.035);
+  --grid-peak-shadow: rgba(83, 103, 245, 0.05);
+  --grid-peak-border: rgba(83, 103, 245, 0.1);
+  --grid-alt-idle-border: rgba(123, 147, 255, 0.02);
+  --grid-alt-peak-bg: rgba(123, 147, 255, 0.025);
+  --grid-alt-peak-shadow: rgba(123, 147, 255, 0.04);
+  --grid-alt-peak-border: rgba(123, 147, 255, 0.08);
+  --grid-layer-opacity: 0.2;
+  --grid-layer-alt-opacity: 0.1;
+
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
     "Helvetica Neue", sans-serif;
 
@@ -65,6 +85,26 @@
   --color-text-secondary: #98989d;
   --color-separator: #38383a;
   --color-glass: rgba(28, 28, 30, 0.72);
+
+  --groww-blue: #6b7ff7;
+  --groww-blue-deep: #5367f5;
+  --groww-blue-light: #8fa0ff;
+  --groww-blue-soft: #1a1d33;
+  --groww-mint: #00e6a8;
+  --groww-panel-bg: linear-gradient(145deg, #0f1018 0%, #0d0d0f 50%, #10121c 100%);
+  --groww-blob-1: rgba(107, 127, 247, 0.12);
+  --groww-blob-2: rgba(83, 103, 245, 0.09);
+  --groww-blob-3: rgba(0, 230, 168, 0.06);
+  --grid-idle-border: rgba(107, 127, 247, 0.07);
+  --grid-peak-bg: rgba(107, 127, 247, 0.1);
+  --grid-peak-shadow: rgba(107, 127, 247, 0.14);
+  --grid-peak-border: rgba(143, 160, 255, 0.22);
+  --grid-alt-idle-border: rgba(0, 230, 168, 0.05);
+  --grid-alt-peak-bg: rgba(0, 230, 168, 0.07);
+  --grid-alt-peak-shadow: rgba(0, 230, 168, 0.1);
+  --grid-alt-peak-border: rgba(0, 230, 168, 0.16);
+  --grid-layer-opacity: 0.34;
+  --grid-layer-alt-opacity: 0.18;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.32);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);

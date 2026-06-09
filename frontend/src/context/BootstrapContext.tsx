@@ -15,11 +15,19 @@ export function BootstrapProvider({ children }: { children: ReactNode }) {
   }, []);
 
   if (error) {
-    return <div className="error-banner">Failed to load app data: {error}</div>;
+    return (
+      <div className="app-loading-shell">
+        <div className="error-banner">Failed to load app data: {error}</div>
+      </div>
+    );
   }
 
   if (!data) {
-    return <div className="loading">Loading…</div>;
+    return (
+      <div className="app-loading-shell">
+        <div className="loading">Loading…</div>
+      </div>
+    );
   }
 
   return <BootstrapContext.Provider value={data}>{children}</BootstrapContext.Provider>;
